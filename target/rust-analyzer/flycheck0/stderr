@@ -1,0 +1,253 @@
+   0.024309575s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="dinglebob"}: cargo::core::compiler::fingerprint: fingerprint error for dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob)/Check { test: false }/TargetInner { name: "dinglebob", doc: true, ..: with_path("/home/poytaytoy/Documents/DingleBob/src/main.rs", Edition2024) }
+   0.024332046s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="dinglebob"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/dinglebob-574763f0189ad26b/bin-dinglebob`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::build_runner::BuildRunner::compile
+   5: cargo::ops::cargo_compile::compile_ws
+   6: cargo::ops::cargo_compile::compile_with_exec
+   7: cargo::ops::cargo_compile::compile
+   8: cargo::commands::check::exec
+   9: cargo::cli::Exec::exec
+  10: cargo::cli::main
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace
+  13: std::rt::lang_start::{{closure}}
+  14: std::rt::lang_start_internal
+  15: main
+  16: __libc_start_call_main
+  17: __libc_start_main_alias_1
+  18: _start
+   0.032869137s  INFO prepare_target{force=false package_id=color-eyre v0.6.5 target="color_eyre"}: cargo::core::compiler::fingerprint: fingerprint error for color-eyre v0.6.5/Check { test: false }/TargetInner { ..: lib_target("color_eyre", ["lib"], "/home/poytaytoy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/color-eyre-0.6.5/src/lib.rs", Edition2018) }
+   0.032882181s  INFO prepare_target{force=false package_id=color-eyre v0.6.5 target="color_eyre"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/color-eyre-ccff98032d7e2538/lib-color_eyre`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::build_runner::BuildRunner::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: cargo::cli::Exec::exec
+  11: cargo::cli::main
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace
+  14: std::rt::lang_start::{{closure}}
+  15: std::rt::lang_start_internal
+  16: main
+  17: __libc_start_call_main
+  18: __libc_start_main_alias_1
+  19: _start
+   0.033026158s  INFO prepare_target{force=false package_id=backtrace v0.3.76 target="backtrace"}: cargo::core::compiler::fingerprint: fingerprint error for backtrace v0.3.76/Check { test: false }/TargetInner { ..: lib_target("backtrace", ["lib"], "/home/poytaytoy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/backtrace-0.3.76/src/lib.rs", Edition2021) }
+   0.033030436s  INFO prepare_target{force=false package_id=backtrace v0.3.76 target="backtrace"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/backtrace-dbac62dd87ac9aa5/lib-backtrace`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::build_runner::BuildRunner::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: cargo::cli::Exec::exec
+  12: cargo::cli::main
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace
+  15: std::rt::lang_start::{{closure}}
+  16: std::rt::lang_start_internal
+  17: main
+  18: __libc_start_call_main
+  19: __libc_start_main_alias_1
+  20: _start
+   0.033354518s  INFO prepare_target{force=false package_id=libc v0.2.178 target="libc"}: cargo::core::compiler::fingerprint: fingerprint error for libc v0.2.178/Check { test: false }/TargetInner { ..: lib_target("libc", ["lib"], "/home/poytaytoy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.178/src/lib.rs", Edition2021) }
+   0.033360639s  INFO prepare_target{force=false package_id=libc v0.2.178 target="libc"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/libc-dd1f1d55c4c45e20/lib-libc`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::build_runner::BuildRunner::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: cargo::cli::Exec::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace
+  16: std::rt::lang_start::{{closure}}
+  17: std::rt::lang_start_internal
+  18: main
+  19: __libc_start_call_main
+  20: __libc_start_main_alias_1
+  21: _start
+   0.033474551s  INFO prepare_target{force=false package_id=libc v0.2.178 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for libc v0.2.178/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "/home/poytaytoy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.178/build.rs", Edition2021) }
+   0.033478799s  INFO prepare_target{force=false package_id=libc v0.2.178 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/libc-cccc2215014a66bc/run-build-script-build-script-build`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::custom_build::build_work
+   4: cargo::core::compiler::custom_build::prepare
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::build_runner::BuildRunner::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: cargo::cli::Exec::exec
+  16: cargo::cli::main
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace
+  19: std::rt::lang_start::{{closure}}
+  20: std::rt::lang_start_internal
+  21: main
+  22: __libc_start_call_main
+  23: __libc_start_main_alias_1
+  24: _start
+   0.033923104s  INFO prepare_target{force=false package_id=libc v0.2.178 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for libc v0.2.178/Build/TargetInner { ..: custom_build_target("build-script-build", "/home/poytaytoy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.178/build.rs", Edition2021) }
+   0.033926079s  INFO prepare_target{force=false package_id=libc v0.2.178 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/libc-2a08b7cad5a5cb0a/build-script-build-script-build`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::build_runner::BuildRunner::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: cargo::cli::Exec::exec
+  15: cargo::cli::main
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace
+  18: std::rt::lang_start::{{closure}}
+  19: std::rt::lang_start_internal
+  20: main
+  21: __libc_start_call_main
+  22: __libc_start_main_alias_1
+  23: _start
+   0.035744716s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="dinglebob"}: cargo::core::compiler::fingerprint: fingerprint error for dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob)/Check { test: true }/TargetInner { name: "dinglebob", doc: true, ..: with_path("/home/poytaytoy/Documents/DingleBob/src/main.rs", Edition2024) }
+   0.035752761s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="dinglebob"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/dinglebob-f0a277b7fbae38cb/test-bin-dinglebob`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::build_runner::BuildRunner::compile
+   5: cargo::ops::cargo_compile::compile_ws
+   6: cargo::ops::cargo_compile::compile_with_exec
+   7: cargo::ops::cargo_compile::compile
+   8: cargo::commands::check::exec
+   9: cargo::cli::Exec::exec
+  10: cargo::cli::main
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace
+  13: std::rt::lang_start::{{closure}}
+  14: std::rt::lang_start_internal
+  15: main
+  16: __libc_start_call_main
+  17: __libc_start_main_alias_1
+  18: _start
+   0.035879867s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="uitest"}: cargo::core::compiler::fingerprint: fingerprint error for dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob)/Check { test: false }/TargetInner { name: "uitest", doc: true, ..: with_path("/home/poytaytoy/Documents/DingleBob/src/bin/uitest.rs", Edition2024) }
+   0.035884064s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="uitest"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/dinglebob-bc3ecf48d9e354c8/bin-uitest`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::build_runner::BuildRunner::compile
+   5: cargo::ops::cargo_compile::compile_ws
+   6: cargo::ops::cargo_compile::compile_with_exec
+   7: cargo::ops::cargo_compile::compile
+   8: cargo::commands::check::exec
+   9: cargo::cli::Exec::exec
+  10: cargo::cli::main
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace
+  13: std::rt::lang_start::{{closure}}
+  14: std::rt::lang_start_internal
+  15: main
+  16: __libc_start_call_main
+  17: __libc_start_main_alias_1
+  18: _start
+   0.035983439s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="uitest"}: cargo::core::compiler::fingerprint: fingerprint error for dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob)/Check { test: true }/TargetInner { name: "uitest", doc: true, ..: with_path("/home/poytaytoy/Documents/DingleBob/src/bin/uitest.rs", Edition2024) }
+   0.035987046s  INFO prepare_target{force=false package_id=dinglebob v0.1.0 (/home/poytaytoy/Documents/DingleBob) target="uitest"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/poytaytoy/Documents/DingleBob/target/debug/.fingerprint/dinglebob-183c7574f4a8a834/test-bin-uitest`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <E as anyhow::context::ext::StdError>::ext_context
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::prepare_target
+   3: cargo::core::compiler::compile
+   4: cargo::core::compiler::build_runner::BuildRunner::compile
+   5: cargo::ops::cargo_compile::compile_ws
+   6: cargo::ops::cargo_compile::compile_with_exec
+   7: cargo::ops::cargo_compile::compile
+   8: cargo::commands::check::exec
+   9: cargo::cli::Exec::exec
+  10: cargo::cli::main
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace
+  13: std::rt::lang_start::{{closure}}
+  14: std::rt::lang_start_internal
+  15: main
+  16: __libc_start_call_main
+  17: __libc_start_main_alias_1
+  18: _start
+   Compiling libc v0.2.178
+error: could not compile `libc` (build script) due to 1 previous error
