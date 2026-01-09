@@ -10,7 +10,7 @@ app = FastAPI()
 
 # Configuration
 DUMMY_FOLDER = "dummy_files"
-BINARY_PATH = "./target/release/dinglebob"
+BINARY_PATH = "./DingleBob/target/release/dinglebob"
 
 # Ensure the temporary directory exists
 os.makedirs(DUMMY_FOLDER, exist_ok=True)
