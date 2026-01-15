@@ -97,17 +97,39 @@
     <details class="syntax-ref" open>
         <summary>&raquo; Syntax Cheat Sheet</summary>
         <div>
-            <strong>Variables:</strong> <code>let x = 10;</code><br>
-            <strong>Functions:</strong> <code>define add(a, b) { return a + b; }</code><br>
-            <strong>Lambdas:</strong> <code>let f = lambda(x) { return x * x; };</code><br>
-            <strong>Conditionals:</strong> <code>if x > 0 { ... } else { ... }</code><br>
-            <strong>Loops:</strong> 
+            <strong>Comments:</strong> <code># this is a comment</code><br>
+
+            <strong>Statements end with <code>;</code>:</strong>
+            <code>let</code>, expression statements, <code>print</code>, <code>return</code>, <code>break</code><br><br>
+
+            <strong>Variables:</strong> <code>let x = 10;</code> / <code>let y;</code> (sugar for <code>y = none;</code>)<br>
+            <strong>Assignment:</strong> <code>x = x + 1;</code> / <code>xs[i] = 42;</code><br>
+            <strong>Print:</strong> <code>print expr;</code><br>
+
+            <strong>Blocks / Scope:</strong> <code>{ ... }</code><br>
+
+            <strong>Conditionals:</strong> <code>if cond { ... } else { ... }</code><br>
+            <strong>Loops:</strong>
             <ul>
-                <li><code>while x < 10 { ... }</code></li>
-                <li><code>for (let i = 0; i < n; i = i + 1) { ... }</code></li>
+                <li><code>while cond { ... }</code></li>
+                <li><code>for ( init ; cond ; inc ) { ... }</code></li>
+                <li><code>break;</code> (only inside loops)</li>
             </ul>
-            <strong>Lists:</strong> <code>let list = [1, 2, 3];</code> (Access: <code>list[0]</code>)<br>
-            <strong>Built-ins:</strong> <code>print x;</code>, <code>len(l)</code>, <code>append(l, v)</code>, <code>concat(a, b)</code>, <code>abs(n)</code>, <code>timeit(expr)</code>
+
+            <strong>Functions:</strong> <code>define add(a, b) { return a + b; }</code><br>
+            <strong>Return:</strong> <code>return expr;</code> or <code>return;</code> (returns <code>none</code>)<br>
+            <strong>Lambdas:</strong> <code>let f = lambda(x) { return x * x; };</code><br><br>
+
+            <strong>Types & literals:</strong>
+            <code>none</code>, <code>true</code>, <code>false</code>, numbers (<code>123</code>, <code>3.14</code>), strings (<code>"hello"</code>)<br>
+
+            <strong>Lists:</strong> <code>let xs = [1, 2, 3];</code> / <code>[]</code> (Index: <code>xs[0]</code>)<br>
+            <strong>Truthiness:</strong> <code>false</code>, <code>none</code>, <code>0</code>, <code>0.0</code> are false; everything else is true<br><br>
+
+            <strong>Operators:</strong> <code>+ - * / %</code>, <code>&gt; &gt;= &lt; &lt;= == !=</code>, <code>and</code>, <code>or</code>, unary <code>!</code><br>
+
+            <strong>Built-ins:</strong> <code>timeit()</code>, <code>abs(x)</code>, <code>len(xs)</code>, <code>copy(xs)</code>, <code>append(xs, v)</code>, <code>concat(a, b)</code><br>
+            <strong>Imports:</strong> <code>import("file.dingle");</code>
         </div>
     </details>
 
