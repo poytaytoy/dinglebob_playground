@@ -9,6 +9,7 @@
             margin: 0 auto; 
             padding: 20px; 
             line-height: 1.6;
+            padding-bottom: 80px;
         }
         h1 { margin-bottom: 10px; }
         .intro-text { margin-bottom: 20px; }
@@ -84,7 +85,16 @@
 <body>
 
 
-    <h1>DingleBob Interpreter</h1>
+    <h1>DingleBob Playground</h1>
+
+    <div class="intro-text">
+        Welcome! This is a playground for the <strong>DingleBob</strong> language.
+    </div>
+
+    <div class="links">
+        &raquo; <strong>Syntax Guide:</strong> <a href="https://github.com/poytaytoy/DingleBob/blob/main/SYNTAX.md" target="_blank">SYNTAX.md</a><br>
+        &raquo; <strong>Repository:</strong> <a href="https://github.com/poytaytoy/DingleBob" target="_blank">github.com/poytaytoy/DingleBob</a>
+    </div>
 
 
     <details class="syntax-ref" open>
@@ -261,13 +271,57 @@ print fact(5); # 120`
         };
 
         codeArea.addEventListener('keydown', function(e) {
+            // Auto-pairing for {} () [] "" ''
+            const pairs = {'{':'}','(' :')','[':']','"':'"','\'':'\''};
+            if ((pairs[e.key]) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const val = this.value;
+                // If text is selected, wrap it
+                if (start !== end) {
+                    this.value = val.slice(0, start) + e.key + val.slice(start, end) + pairs[e.key] + val.slice(end);
+                    this.selectionStart = start + 1;
+                    this.selectionEnd = end + 1;
+                } else {
+                    this.value = val.slice(0, start) + e.key + pairs[e.key] + val.slice(end);
+                    this.selectionStart = this.selectionEnd = start + 1;
+                }
+                updateLines();
+                return;
+            }
+            // If closing bracket/quote typed and next char is that, just move cursor
+            if ((['}', ')', ']', '"', "'"]).includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                const next = this.value[this.selectionStart];
+                if (next === e.key) {
+                    e.preventDefault();
+                    this.selectionStart = this.selectionEnd = this.selectionStart + 1;
+                    return;
+                }
+            }
+            // Tab for indent
             if (e.key === 'Tab') {
                 e.preventDefault();
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
                 this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
                 this.selectionStart = this.selectionEnd = start + 4;
-                updateLines(); 
+                updateLines();
+                return;
+            }
+            // Auto-indent on Enter
+            if (e.key === 'Enter') {
+                const start = this.selectionStart;
+                const value = this.value;
+                const before = value.lastIndexOf('\n', start - 1) + 1;
+                const prevLine = value.slice(before, start);
+                const indent = prevLine.match(/^\s*/)[0];
+                setTimeout(() => {
+                    const cur = this.selectionStart;
+                    this.value = this.value.slice(0, cur) + indent + this.value.slice(cur);
+                    this.selectionStart = this.selectionEnd = cur + indent.length;
+                    updateLines();
+                }, 0);
             }
         });
 
