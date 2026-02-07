@@ -9,7 +9,7 @@ from pydantic import BaseModel
 app = FastAPI()
 
 # Configuration
-DUMMY_FOLDER = "dummy_files"
+DUMMY_FOLDER = "exec"
 BINARY_PATH = "./DingleBob/target/release/dinglebob"
 
 # Ensure the temporary directory exists

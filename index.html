@@ -83,16 +83,9 @@
 </head>
 <body>
 
+
     <h1>DingleBob Interpreter</h1>
 
-    <div class="intro-text">
-        Welcome! This is a playground for the <strong>DingleBob</strong> language.
-    </div>
-
-    <div class="links">
-        &raquo; <strong>Syntax Guide:</strong> <a href="https://github.com/poytaytoy/DingleBob/blob/main/SYNTAX.md" target="_blank">SYNTAX.md</a><br>
-        &raquo; <strong>Repository:</strong> <a href="https://github.com/poytaytoy/DingleBob" target="_blank">github.com/poytaytoy/DingleBob</a>
-    </div>
 
     <details class="syntax-ref" open>
         <summary>&raquo; Syntax Cheat Sheet</summary>
@@ -133,6 +126,14 @@
         </div>
     </details>
 
+    <div style="font-weight: bold; margin-bottom: 6px;">Examples:</div>
+    <div class="examples" style="margin-bottom: 20px;">
+        <button onclick="loadExample('sorting')">Sorting (Quicksort)</button>
+        <button onclick="loadExample('struct')">Struct-like</button>
+        <button onclick="loadExample('class')">Class-like</button>
+        <button onclick="loadExample('zcombinator')">Z-Combinator (Lambda Recursion)</button>
+    </div>
+
     <div class="editor">
         <div id="line-numbers">1</div>
         <textarea id="code" spellcheck="false" placeholder="Enter dinglebob code..."></textarea>
@@ -151,6 +152,103 @@
         const outputDiv = document.getElementById('output');
         const outputContainer = document.getElementById('output-container');
         const DEFAULT_CODE = 'print "Hello World";';
+
+        const examples = {
+            sorting: `define quick_sort(xs) {
+    if len(xs) <= 1 {
+        return xs;
+    }
+
+    let pivot = xs[0];
+    let less = [];
+    let equal = [];
+    let greater = [];
+
+    for (let i = 0; i < len(xs); i = i + 1) {
+        let val = xs[i];
+        if val < pivot {
+            append(less, val);
+        } else {
+            if val == pivot {
+                append(equal, val);
+            } else {
+                append(greater, val);
+            }
+        }
+    }
+
+    return concat(concat(quick_sort(less), equal), quick_sort(greater));
+}
+
+let unsorted = [10, -1, 2, 5, 0, 9, 3];
+print quick_sort(copy(unsorted)); # [-1, 0, 2, 3, 5, 9, 10]`,
+            struct: `define person(name, age) {
+    return lambda(msg) {
+        if msg == "name" { return name; }
+        if msg == "age"  { return age; }
+    };
+}
+
+let p = person("Alice", 20);
+print p("name"); # Alice
+print p("age");  # 20`,
+            class: `define BankAccount(owner, initial_balance) {
+    let balance = initial_balance;
+    let transactions = [];
+
+    let deposit = lambda(amount) {
+        balance = balance + amount;
+        append(transactions, "Deposit: " + amount);
+        return balance;
+    };
+
+    let withdraw = lambda(amount) {
+        if amount > balance {
+            print "Insufficient funds for " + owner;
+            return none;
+        }
+        balance = balance - amount;
+        append(transactions, "Withdraw: " + amount);
+        return balance;
+    };
+
+    return lambda(message) {
+        if message == "balance" { return balance; }
+        if message == "owner"   { return owner; }
+        if message == "deposit" { return deposit; }
+        if message == "withdraw" { return withdraw; }
+        if message == "history" { return copy(transactions); }
+        print "Method not found: " + message;
+    };
+}
+
+let my_acc = BankAccount("poytaytoy", 1000);
+my_acc("deposit")(500);
+my_acc("withdraw")(200);`,
+            zcombinator: `let Y = lambda(f) {
+    let g = lambda(x) {
+        return f(lambda(v) { 
+            return x(x)(v); 
+        });
+    };
+    return g(g);
+};
+
+let factorial_gen = lambda(rec) {
+    return lambda(n) {
+        if n == 0 { return 1; }
+        return n * rec(n - 1);
+    };
+};
+
+let fact = Y(factorial_gen);
+print fact(5); # 120`
+        };
+
+        function loadExample(name) {
+            codeArea.value = examples[name];
+            updateLines();
+        }
 
         const updateLines = () => {
             const count = codeArea.value.split('\n').length;
