@@ -2,14 +2,67 @@ import React from 'react';
 
 const Editor = ({ value, onChange, placeholder }) => {
     const handleKeyDown = (e) => {
+        const textarea = e.target;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const val = textarea.value;
+
+        // Auto-pairing
+        const pairs = { '{': '}', '(': ')', '[': ']', '"': '"', "'": "'" };
+        if (pairs[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault();
+            const pair = pairs[e.key];
+            const newValue = val.substring(0, start) + e.key + pair + val.substring(end);
+
+            // Fix: Call onChange with the string value directly
+            onChange(newValue);
+
+            // Move cursor inside pair after render
+            setTimeout(() => {
+                textarea.selectionStart = textarea.selectionEnd = start + 1;
+            }, 0);
+            return;
+        }
+
+        // Skip closing pair if typed over
+        if (['}', ')', ']', '"', "'"].includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            if (val[start] === e.key) {
+                e.preventDefault();
+                textarea.selectionStart = textarea.selectionEnd = start + 1;
+                return;
+            }
+        }
+
+        // Tab indentation
         if (e.key === 'Tab') {
             e.preventDefault();
-            const start = e.target.selectionStart;
-            const end = e.target.selectionEnd;
-            const val = e.target.value;
-            e.target.value = val.substring(0, start) + "    " + val.substring(end);
-            e.target.selectionStart = e.target.selectionEnd = start + 4;
-            onChange(e.target.value);
+            const newValue = val.substring(0, start) + "    " + val.substring(end);
+            onChange(newValue);
+            setTimeout(() => {
+                textarea.selectionStart = textarea.selectionEnd = start + 4;
+            }, 0);
+            return;
+        }
+
+        // Auto-indent on Enter
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const before = val.lastIndexOf('\n', start - 1) + 1;
+            const prevLine = val.slice(before, start);
+            let indent = (prevLine.match(/^\s*/) || [''])[0];
+
+            // Increase indent if previous line ended with {
+            if (prevLine.trim().endsWith('{')) {
+                indent += "    ";
+            }
+
+            const newValue = val.substring(0, start) + '\n' + indent + val.substring(end);
+            onChange(newValue);
+
+            setTimeout(() => {
+                textarea.selectionStart = textarea.selectionEnd = start + 1 + indent.length;
+            }, 0);
+            return;
         }
     };
 
