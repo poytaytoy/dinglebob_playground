@@ -1,0 +1,85 @@
+:root {
+  font-family: monospace;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  max-width: 1200px;
+  /* Slightly wider for IDE layout */
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: monospace;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Cheat Sheet Styles */
+.syntax-ref {
+  margin-bottom: 20px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.syntax-ref summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+}
+
+.syntax-ref div {
+  background: #fff;
+  padding: 15px;
+  margin-top: 10px;
+  border-top: 1px dashed #ccc;
+}
+
+.syntax-ref code {
+  background: #f9f9f9;
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid #eee;
+}

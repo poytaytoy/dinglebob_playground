@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>dinglebob</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .intro-text {
+            margin-bottom: 20px;
+        }
+
+        .links {
+            margin-bottom: 20px;
+        }
+
+        /* Cheat Sheet styling */
+        .syntax-ref {
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .syntax-ref summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .syntax-ref div {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        .syntax-ref code {
+            background: #f9f9f9;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .editor {
+            display: flex;
+            border: 1px solid black;
+            width: 100%;
+            height: 400px;
+        }
+
+        #line-numbers {
+            width: 40px;
+            background: #eee;
+            text-align: right;
+            padding: 5px;
+            overflow: hidden;
+            font-size: 13px;
+            line-height: 1.5;
+            border-right: 1px solid #ccc;
+        }
+
+        textarea {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 5px;
+            resize: none;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: monospace;
+        }
+
+        #output-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        #output {
+            width: 100%;
+            white-space: pre-wrap;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <h1>DingleBob Playground</h1>
+
+    <div class="intro-text">
+        Welcome! This is a playground for the <strong>DingleBob</strong> language.
+    </div>
+
+    <div class="links">
+        &raquo; <strong>Syntax Guide:</strong> <a href="https://github.com/poytaytoy/DingleBob/blob/main/SYNTAX.md"
+            target="_blank">SYNTAX.md</a><br>
+        &raquo; <strong>Repository:</strong> <a href="https://github.com/poytaytoy/DingleBob"
+            target="_blank">github.com/poytaytoy/DingleBob</a>
+    </div>
+
+
+    <details class="syntax-ref" open>
+        <summary>&raquo; Syntax Cheat Sheet</summary>
+        <div>
+            <strong>Comments:</strong> <code># this is a comment</code><br>
+
+            <strong>Statements end with <code>;</code>:</strong>
+            <code>let</code>, expression statements, <code>print</code>, <code>return</code>, <code>break</code><br><br>
+
+            <strong>Variables:</strong> <code>let x = 10;</code> / <code>let y;</code> (sugar for
+            <code>y = none;</code>)<br>
+            <strong>Assignment:</strong> <code>x = x + 1;</code> / <code>xs[i] = 42;</code><br>
+            <strong>Print:</strong> <code>print expr;</code><br>
+
+            <strong>Blocks / Scope:</strong> <code>{ ... }</code><br>
+
+            <strong>Conditionals:</strong> <code>if cond { ... } else { ... }</code><br>
+            <strong>Loops:</strong>
+            <ul>
+                <li><code>while cond { ... }</code></li>
+                <li><code>for ( init ; cond ; inc ) { ... }</code></li>
+                <li><code>break;</code> (only inside loops)</li>
+            </ul>
+
+            <strong>Functions:</strong> <code>define add(a, b) { return a + b; }</code><br>
+            <strong>Return:</strong> <code>return expr;</code> or <code>return;</code> (returns <code>none</code>)<br>
+            <strong>Lambdas:</strong> <code>let f = lambda(x) { return x * x; };</code><br><br>
+
+            <strong>Types & literals:</strong>
+            <code>none</code>, <code>true</code>, <code>false</code>, numbers (<code>123</code>, <code>3.14</code>),
+            strings (<code>"hello"</code>)<br>
+
+            <strong>Lists:</strong> <code>let xs = [1, 2, 3];</code> / <code>[]</code> (Index: <code>xs[0]</code>)<br>
+            <strong>Truthiness:</strong> <code>false</code>, <code>none</code>, <code>0</code>, <code>0.0</code> are
+            false; everything else is true<br><br>
+
+            <strong>Operators:</strong> <code>+ - * / %</code>, <code>&gt; &gt;= &lt; &lt;= == !=</code>,
+            <code>and</code>, <code>or</code>, unary <code>!</code><br>
+
+            <strong>Built-ins:</strong> <code>timeit()</code>, <code>abs(x)</code>, <code>len(xs)</code>,
+            <code>copy(xs)</code>, <code>append(xs, v)</code>, <code>concat(a, b)</code><br>
+            <strong>Imports:</strong> <code>import("file.dingle");</code>
+        </div>
+    </details>
+
+    <div style="font-weight: bold; margin-bottom: 6px;">Examples:</div>
+    <div class="examples" style="margin-bottom: 20px;">
+        <button onclick="loadExample('sorting')">Sorting (Quicksort)</button>
+        <button onclick="loadExample('struct')">Struct-like</button>
+        <button onclick="loadExample('class')">Class-like</button>
+        <button onclick="loadExample('zcombinator')">Z-Combinator (Lambda Recursion)</button>
+    </div>
+
+    <div class="editor">
+        <div id="line-numbers">1</div>
+        <textarea id="code" spellcheck="false" placeholder="Enter dinglebob code..."></textarea>
+    </div>
+
+    <button id="run">Run</button>
+
+    <div id="output-container">
+        <h3>Output:</h3>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const codeArea = document.getElementById('code');
+        const lineNumbers = document.getElementById('line-numbers');
+        const outputDiv = document.getElementById('output');
+        const outputContainer = document.getElementById('output-container');
+        const DEFAULT_CODE = 'print "Hello World";';
+
+        const examples = {
+            sorting: `define quick_sort(xs) {
+    if len(xs) <= 1 {
+        return xs;
+    }
+
+    let pivot = xs[0];
+    let less = [];
+    let equal = [];
+    let greater = [];
+
+    for (let i = 0; i < len(xs); i = i + 1) {
+        let val = xs[i];
+        if val < pivot {
+            append(less, val);
+        } else {
+            if val == pivot {
+                append(equal, val);
+            } else {
+                append(greater, val);
+            }
+        }
+    }
+
+    return concat(concat(quick_sort(less), equal), quick_sort(greater));
+}
+
+let unsorted = [10, -1, 2, 5, 0, 9, 3];
+print quick_sort(copy(unsorted)); # [-1, 0, 2, 3, 5, 9, 10]`,
+            struct: `define person(name, age) {
+    return lambda(msg) {
+        if msg == "name" { return name; }
+        if msg == "age"  { return age; }
+    };
+}
+
+let p = person("Alice", 20);
+print p("name"); # Alice
+print p("age");  # 20`,
+            class: `define BankAccount(owner, initial_balance) {
+    let balance = initial_balance;
+    let transactions = [];
+
+    let deposit = lambda(amount) {
+        balance = balance + amount;
+        append(transactions, "Deposit: " + amount);
+        return balance;
+    };
+
+    let withdraw = lambda(amount) {
+        if amount > balance {
+            print "Insufficient funds for " + owner;
+            return none;
+        }
+        balance = balance - amount;
+        append(transactions, "Withdraw: " + amount);
+        return balance;
+    };
+
+    return lambda(message) {
+        if message == "balance" { return balance; }
+        if message == "owner"   { return owner; }
+        if message == "deposit" { return deposit; }
+        if message == "withdraw" { return withdraw; }
+        if message == "history" { return copy(transactions); }
+        print "Method not found: " + message;
+    };
+}
+
+let my_acc = BankAccount("poytaytoy", 1000);
+my_acc("deposit")(500);
+my_acc("withdraw")(200);`,
+            zcombinator: `let Y = lambda(f) {
+    let g = lambda(x) {
+        return f(lambda(v) { 
+            return x(x)(v); 
+        });
+    };
+    return g(g);
+};
+
+let factorial_gen = lambda(rec) {
+    return lambda(n) {
+        if n == 0 { return 1; }
+        return n * rec(n - 1);
+    };
+};
+
+let fact = Y(factorial_gen);
+print fact(5); # 120`
+        };
+
+        function loadExample(name) {
+            codeArea.value = examples[name];
+            updateLines();
+        }
+
+        const updateLines = () => {
+            const count = codeArea.value.split('\n').length;
+            lineNumbers.innerHTML = Array.from({ length: count }, (_, i) => i + 1).join('<br>');
+        };
+
+        window.onload = () => {
+            codeArea.value = DEFAULT_CODE;
+            updateLines();
+        };
+
+        codeArea.addEventListener('keydown', function (e) {
+            // Auto-pairing for {} () [] "" ''
+            const pairs = { '{': '}', '(': ')', '[': ']', '"': '"', '\'': '\'' };
+            if ((pairs[e.key]) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const val = this.value;
+                // If text is selected, wrap it
+                if (start !== end) {
+                    this.value = val.slice(0, start) + e.key + val.slice(start, end) + pairs[e.key] + val.slice(end);
+                    this.selectionStart = start + 1;
+                    this.selectionEnd = end + 1;
+                } else {
+                    this.value = val.slice(0, start) + e.key + pairs[e.key] + val.slice(end);
+                    this.selectionStart = this.selectionEnd = start + 1;
+                }
+                updateLines();
+                return;
+            }
+            // If closing bracket/quote typed and next char is that, just move cursor
+            if ((['}', ')', ']', '"', "'"]).includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                const next = this.value[this.selectionStart];
+                if (next === e.key) {
+                    e.preventDefault();
+                    this.selectionStart = this.selectionEnd = this.selectionStart + 1;
+                    return;
+                }
+            }
+            // Tab for indent
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 4;
+                updateLines();
+                return;
+            }
+            // Auto-indent on Enter
+            if (e.key === 'Enter') {
+                const start = this.selectionStart;
+                const value = this.value;
+                const before = value.lastIndexOf('\n', start - 1) + 1;
+                const prevLine = value.slice(before, start);
+                const indent = prevLine.match(/^\s*/)[0];
+                setTimeout(() => {
+                    const cur = this.selectionStart;
+                    this.value = this.value.slice(0, cur) + indent + this.value.slice(cur);
+                    this.selectionStart = this.selectionEnd = cur + indent.length;
+                    updateLines();
+                }, 0);
+            }
+        });
+
+        codeArea.addEventListener('input', updateLines);
+        codeArea.addEventListener('scroll', () => {
+            lineNumbers.scrollTop = codeArea.scrollTop;
+        });
+
+        document.getElementById('run').addEventListener('click', async () => {
+            outputContainer.style.display = 'block';
+            outputDiv.innerText = "Executing...";
+
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: codeArea.value })
+                });
+                const data = await response.json();
+                outputDiv.innerText = data.output;
+                outputContainer.style.display = 'block';
+            } catch (e) {
+                outputDiv.innerText = "Error: Connection failed";
+            }
+        });
+    </script>
+</body>
+
+</html>
