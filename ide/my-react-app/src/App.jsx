@@ -1,11 +1,11 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import FileTree from './components/FileTree';
 import Editor from './components/Editor';
 import Terminal from './components/Terminal';
-import { submitCode } from './utils/apiHandler';
+import { streamCode } from './utils/apiHandler';
 import {
   createInitialState,
   insertNode,
@@ -62,6 +62,7 @@ function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
+  const wsRef = useRef(null);
 
   // Load from session storage
   useEffect(() => {
@@ -111,29 +112,41 @@ function App() {
     setFiles(prev => updateFileContent(prev, activeFileId, newCode));
   };
 
-  const handleRun = async () => {
+  const handleRun = () => {
+    if (isRunning) return; // Prevent double clicks
+
     setIsRunning(true);
-    setOutput("Sending to Backend...");
+    setOutput(""); // Clear previous output
 
-    try {
-      // Send JSON Tree directly
-      const { output: newOutput, newTree } = await submitCode(files);
+    wsRef.current = streamCode(
+      files,
+      (data) => setOutput(prev => prev + data),
+      (newTree) => {
+        setFiles(newTree);
+        setIsRunning(false);
+        wsRef.current = null;
 
-      setOutput(newOutput);
-      setFiles(newTree);
+        // Try to re-select main.dingle if active ID is lost (UUIDs regenerate)
+        const newMain = newTree.find(n => n.name === 'main.dingle');
+        if (newMain) setActiveFileId(newMain.id);
+        else setActiveFileId(null);
+      },
+      (errorMessage) => {
+        setOutput(prev => prev + "\nError: " + errorMessage);
+        setIsRunning(false);
+        wsRef.current = null;
+      }
+    );
+  };
 
-      // Try to re-select main.dingle if active ID is lost (UUIDs regenerate)
-      const newMain = newTree.find(n => n.name === 'main.dingle');
-      if (newMain) setActiveFileId(newMain.id);
-      else setActiveFileId(null);
-
-    } catch (e) {
-      setOutput(`Error: ${e.message}`);
-    } finally {
+  const handleStop = () => {
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+      setOutput(prev => prev + "\n[Stopped by User]");
       setIsRunning(false);
     }
   };
-
   const handleCreateFile = () => {
     const parentId = (selectedNode && selectedNode.type === TYPE_FOLDER) ? selectedNode.id : null;
     const name = prompt("Enter file name:");
@@ -272,6 +285,11 @@ function App() {
         <button id="run" onClick={handleRun} disabled={isRunning} style={{ marginTop: '0' }}>
           {isRunning ? 'Running...' : 'Run'}
         </button>
+        {isRunning && (
+          <button onClick={handleStop} style={{ marginTop: '0', marginLeft: '10px', backgroundColor: '#d32f2f' }}>
+            Stop
+          </button>
+        )}
       </div>
 
     </div>

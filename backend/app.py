@@ -3,8 +3,9 @@ import os
 import subprocess
 import shutil
 import uuid
+import asyncio
 from typing import List, Optional, Literal
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -58,8 +59,6 @@ def recreate_fs_from_tree(base_path: str, nodes: List[FileNode]):
 def scan_fs_to_tree(base_path: str) -> List[FileNode]:
     """Recursively scans disk to build JSON tree."""
     nodes = []
-    # We strip the base_path to get relative structure, 
-    # but here we just list dir content
     
     if not os.path.exists(base_path):
         return []
@@ -107,18 +106,15 @@ async def submit_code(request: ExecutionRequest):
         recreate_fs_from_tree(sandbox_path, request.files)
         
         # 3. Determine Entry Point (main.dingle)
-        # We assume main.dingle is at root, but user can put it anywhere?
-        # Standard: run 'main.dingle' in root.
         main_path = os.path.join(sandbox_path, "main.dingle")
         
         if not os.path.exists(main_path):
             output = "Error: main.dingle not found in root."
         else:
             # 4. Execute
-            # Run specific main.dingle
             result = subprocess.run(
                 [os.path.abspath(BINARY_PATH), "main.dingle"],
-                cwd=os.path.abspath(sandbox_path), # Set CWD to sandbox root
+                cwd=os.path.abspath(sandbox_path),
                 capture_output=True,
                 text=True
             )
@@ -127,11 +123,9 @@ async def submit_code(request: ExecutionRequest):
             output = clean_output(raw)
             
         # 5. Read back new state
-        # We re-scan the whole folder to catch new files/folders
         new_tree = scan_fs_to_tree(sandbox_path)
         
     except Exception as e:
-        # Cleanup if needed
         if os.path.exists(sandbox_path):
              shutil.rmtree(sandbox_path)
         raise HTTPException(status_code=500, detail=f"Internal Execution Error: {str(e)}")
@@ -142,3 +136,85 @@ async def submit_code(request: ExecutionRequest):
              shutil.rmtree(sandbox_path)
              
     return ExecutionResponse(output=output, files=new_tree)
+
+@app.websocket("/ws/submit")
+async def websocket_submit(websocket: WebSocket):
+    await websocket.accept()
+    sandbox_path = None
+    process = None
+    
+    try:
+        # 1. Receive Execution Context
+        data = await websocket.receive_json()
+        request = ExecutionRequest(**data)
+        
+        # 2. Setup Sandbox
+        sandbox_id = str(uuid.uuid4())
+        sandbox_path = os.path.join(EXEC_BASE, sandbox_id)
+        os.makedirs(sandbox_path, exist_ok=True)
+        
+        recreate_fs_from_tree(sandbox_path, request.files)
+        main_path = os.path.join(sandbox_path, "main.dingle")
+        
+        if not os.path.exists(main_path):
+             await websocket.send_json({"type": "stderr", "data": "Error: main.dingle not found in root.\n"})
+             await websocket.send_json({"type": "result", "files": request.files})
+             return
+
+        # 3. Async Execution
+        process = await asyncio.create_subprocess_exec(
+            os.path.abspath(BINARY_PATH), "main.dingle",
+            cwd=os.path.abspath(sandbox_path),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        
+        # Helper to read stream
+        async def read_stream(stream, type_):
+            while True:
+                line = await stream.readline()
+                if not line:
+                    break
+                text = line.decode('utf-8', errors='replace')
+                await websocket.send_json({"type": type_, "data": clean_output(text)})
+
+        await asyncio.gather(
+            read_stream(process.stdout, "stdout"),
+            read_stream(process.stderr, "stderr")
+        )
+        
+        await process.wait()
+        
+        # 4. Return Final State
+        new_tree = scan_fs_to_tree(sandbox_path)
+        # Convert Pydantic models to dicts for JSON serialization
+        new_tree_dicts = [node.model_dump() for node in new_tree]
+        await websocket.send_json({"type": "result", "files": new_tree_dicts})
+        
+    except WebSocketDisconnect:
+        print(f"Client disconnected")
+        if process and process.returncode is None:
+            print("Killing process...")
+            try:
+                process.terminate()
+                await process.wait()
+            except Exception as e:
+                print(f"Error killing process: {e}")
+
+    except Exception as e:
+        # Check if connection is still open before sending error
+        # (It might be closed if that's what caused the exception)
+        try:
+             await websocket.send_json({"type": "error", "message": str(e)})
+        except:
+             pass
+    finally:
+        # Ensure process is killed if we exit for any reason and it's still running
+        if process and process.returncode is None:
+             try:
+                process.terminate()
+             except:
+                pass
+                
+        if sandbox_path and os.path.exists(sandbox_path):
+             shutil.rmtree(sandbox_path)
