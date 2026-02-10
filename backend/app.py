@@ -4,8 +4,10 @@ import subprocess
 import shutil
 import uuid
 import asyncio
+import tempfile
 from typing import List, Optional, Literal
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, BackgroundTasks
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -136,6 +138,37 @@ async def submit_code(request: ExecutionRequest):
              shutil.rmtree(sandbox_path)
              
     return ExecutionResponse(output=output, files=new_tree)
+
+def cleanup_temp_dirs(paths: List[str]):
+    """Cleans up temporary directories."""
+    for path in paths:
+        if os.path.exists(path):
+            try:
+                shutil.rmtree(path)
+            except Exception as e:
+                print(f"Error cleaning up {path}: {e}")
+
+@app.post("/download_zip")
+async def download_zip(request: ExecutionRequest, background_tasks: BackgroundTasks):
+    source_dir = tempfile.mkdtemp()
+    zip_dir = tempfile.mkdtemp()
+    
+    try:
+        # 1. Recreate FS in source_dir
+        recreate_fs_from_tree(source_dir, request.files)
+        
+        # 2. Create ZIP
+        base_name = os.path.join(zip_dir, "dinglebob-project")
+        zip_path = shutil.make_archive(base_name, 'zip', source_dir)
+        
+        # 3. Schedule cleanup
+        background_tasks.add_task(cleanup_temp_dirs, [source_dir, zip_dir])
+        
+        return FileResponse(zip_path, filename="dinglebob-project.zip", media_type="application/zip")
+        
+    except Exception as e:
+        cleanup_temp_dirs([source_dir, zip_dir])
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.websocket("/ws/submit")
 async def websocket_submit(websocket: WebSocket):

@@ -56,6 +56,10 @@ const SyntaxGuide = () => (
   </details>
 );
 
+import { SAMPLES } from './constants/samples';
+
+// ... (existing imports)
+
 function App() {
   const [files, setFiles] = useState(createInitialState());
   const [activeFileId, setActiveFileId] = useState("root-main");
@@ -63,20 +67,34 @@ function App() {
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const wsRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-  // Load from session storage
+  // Load state (URL param > Session Storage > Default)
   useEffect(() => {
-    const saved = sessionStorage.getItem('dinglebob_react_vfs_tree');
-    if (saved) {
-      try {
-        setFiles(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to load VFS", e);
+    const params = new URLSearchParams(window.location.search);
+    const sampleKey = params.get('sample');
+
+    if (sampleKey && SAMPLES[sampleKey]) {
+      console.log("Loading sample project:", sampleKey);
+      const sampleFiles = SAMPLES[sampleKey];
+      setFiles(sampleFiles);
+      // Set active file to main.dingle if it exists
+      const main = sampleFiles.find(n => n.name === 'main.dingle');
+      if (main) setActiveFileId(main.id);
+    } else {
+      // Fallback to session storage
+      const saved = sessionStorage.getItem('dinglebob_react_vfs_tree');
+      if (saved) {
+        try {
+          setFiles(JSON.parse(saved));
+        } catch (e) {
+          console.error("Failed to load VFS", e);
+        }
       }
     }
   }, []);
 
-  // Save to session storage
+  // Save to session storage (unchanged)
   useEffect(() => {
     sessionStorage.setItem('dinglebob_react_vfs_tree', JSON.stringify(files));
   }, [files]);
@@ -196,8 +214,86 @@ function App() {
     setFiles(prev => renameNode(prev, id, newName));
   };
 
+  // --- Handlers for Config ---
+  const handleDownloadConfig = () => {
+    const json = JSON.stringify(files, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "dinglebob-config.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleLoadConfig = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const importedFiles = JSON.parse(event.target.result);
+        if (Array.isArray(importedFiles)) {
+          setFiles(importedFiles);
+          // Verify if active file still exists
+          const exists = findNode(importedFiles, activeFileId);
+          if (!exists) setActiveFileId(null);
+          alert("Config loaded successfully!");
+        } else {
+          alert("Invalid config file format.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Failed to parse JSON config.");
+      }
+    };
+    reader.readAsText(file);
+    // Reset input value to allow re-uploading same file
+    e.target.value = null;
+  };
+
+  const handleDownloadZip = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/download_zip', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ files }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "dinglebob-project.zip";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading zip:', error);
+      alert('Failed to download ZIP file.');
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        accept=".json"
+        onChange={handleLoadConfig}
+      />
 
       <h1>DingleBob Playground</h1>
       <div className="intro-text" style={{ marginBottom: '10px' }}>
@@ -210,13 +306,21 @@ function App() {
 
       <SyntaxGuide />
 
+      {/* Action Buttons */}
+      <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
+        <button onClick={handleDownloadConfig} style={{ fontSize: '11px', padding: '5px 10px', backgroundColor: '#e3f2fd', border: '1px solid #90caf9' }}>DOWNLOAD JSON CONFIG</button>
+        <button onClick={() => fileInputRef.current.click()} style={{ fontSize: '11px', padding: '5px 10px', backgroundColor: '#e3f2fd', border: '1px solid #90caf9' }}>LOAD JSON CONFIG</button>
+        <button onClick={handleDownloadZip} style={{ fontSize: '11px', padding: '5px 10px', backgroundColor: '#f3e5f5', border: '1px solid #ce93d8' }}>DOWNLOAD AS FILES</button>
+      </div>
+
       <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Project Files:</div>
 
       <div style={{
         display: 'flex',
         border: '1px solid black',
-        height: '500px',
-        marginBottom: '20px'
+        flex: 1,
+        marginBottom: '20px',
+        minHeight: 0
       }}>
         {/* Sidebar */}
         <div style={{
@@ -240,6 +344,16 @@ function App() {
               onRename={handleRename}
             />
           </div>
+
+          {/* Sample Projects Section */}
+          <div style={{ borderTop: '1px solid black', padding: '10px', backgroundColor: '#e0e0e0' }}>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '5px' }}>Load Sample Projects:</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <button style={{ fontSize: '11px' }} onClick={() => window.open('?sample=algorithms', '_blank')}>Algorithms</button>
+              <button style={{ fontSize: '11px' }} onClick={() => window.open('?sample=file_io', '_blank')}>File I/O</button>
+              <button style={{ fontSize: '11px' }} onClick={() => window.open('?sample=lambda_bank', '_blank')}>Lambda Bank</button>
+            </div>
+          </div>
         </div>
 
         {/* Editor & Terminal Split */}
@@ -259,7 +373,7 @@ function App() {
             </span>
           </div>
 
-          <div style={{ flex: 2, position: 'relative' }}>
+          <div style={{ flex: 2, position: 'relative', minHeight: 0 }}>
             <Editor
               value={activeFileNode ? activeFileNode.content || "" : ""}
               onChange={handleCodeChange}
@@ -267,11 +381,12 @@ function App() {
           </div>
 
           <div style={{
-            flex: 1,
+            height: '200px',
             display: 'flex',
             flexDirection: 'column',
             borderTop: '1px solid black',
-            backgroundColor: '#fff'
+            backgroundColor: '#fff',
+            minHeight: 0
           }}>
             <div style={{ padding: '5px 10px', backgroundColor: '#eee', fontSize: '12px', borderBottom: '1px solid #ccc', fontWeight: 'bold' }}>
               Output

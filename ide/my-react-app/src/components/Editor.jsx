@@ -79,7 +79,7 @@ const Editor = ({ value, onChange, placeholder }) => {
     const lines = Array.from({ length: lineCount }, (_, i) => i + 1);
 
     return (
-        <div style={{ display: 'flex', height: '100%', boxSizing: 'border-box', border: '1px solid #ccc' }}>
+        <div style={{ display: 'flex', height: '100%', boxSizing: 'border-box', border: '1px solid #ccc', overflow: 'hidden' }}>
             {/* Line Numbers */}
             <div
                 ref={linesRef}
