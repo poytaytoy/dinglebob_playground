@@ -257,7 +257,8 @@ function App() {
 
   const handleDownloadZip = async () => {
     try {
-      const response = await fetch('http://localhost:8000/download_zip', {
+      const baseUrl = window.location.port === '5173' ? 'http://localhost:8000' : '';
+      const response = await fetch(`${baseUrl}/download_zip`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,7 +3,13 @@
 // Sends JSON tree directly to backend via WebSocket for streaming output
 
 export const streamCode = (fileTree, onOutput, onComplete, onError) => {
-    const ws = new WebSocket('ws://localhost:8000/ws/submit');
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.host; // includes port
+    // In dev, we might be on port 5173 but backend is 8000. 
+    // In prod, safe to use window.location.host if served from same origin.
+    // Fallback for dev: if port is 5173, assume backend is 8000.
+    const wsHost = host.includes('5173') ? host.replace('5173', '8000') : host;
+    const ws = new WebSocket(`${protocol}//${wsHost}/ws/submit`);
 
     ws.onopen = () => {
         // Send the initial file tree payload
@@ -42,7 +48,9 @@ export const streamCode = (fileTree, onOutput, onComplete, onError) => {
 // Deprecated: kept for reference or fallback if needed
 export const submitCode = async (fileTree) => {
     try {
-        const response = await fetch('http://localhost:8000/submit', {
+        // Use relative path for production, handle dev proxy if needed
+        const baseUrl = window.location.port === '5173' ? 'http://localhost:8000' : '';
+        const response = await fetch(`${baseUrl}/submit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
