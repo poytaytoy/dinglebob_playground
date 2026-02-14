@@ -11,7 +11,15 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from fastapi.staticfiles import StaticFiles
+import os
+
 app = FastAPI()
+
+# Serve static files if the directory exists (Docker)
+if os.path.exists("static"):
+    app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,6 +28,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+async def read_root():
+    if os.path.exists("static/index.html"):
+        return FileResponse("static/index.html")
+    return {"message": "DingleBob Backend Running (Frontend not built)"}
+
 
 # Configuration
 EXEC_BASE = "exec"

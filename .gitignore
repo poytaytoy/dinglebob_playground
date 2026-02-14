@@ -1,3 +1,28 @@
 __pycache__
 .venv
 backend/DingleBob
+
+# Logs
+ide/logs
+ide/*.log
+ide/npm-debug.log*
+ide/yarn-debug.log*
+ide/yarn-error.log*
+ide/pnpm-debug.log*
+ide/lerna-debug.log*
+
+ide/node_modules
+ide/dist
+ide/dist-ssr
+ide/*.local
+
+# Editor directories and files
+ide/.vscode/*
+ide/.vscode/extensions.json
+ide/.idea
+ide/.DS_Store
+ide/*.suo
+ide/*.ntvs*
+ide/*.njsproj
+ide/*.sln
+ide/*.sw?
